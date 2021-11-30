@@ -1,0 +1,22 @@
+:local DeviceName [/system identity get name];
+/system package update check-for-updates
+
+:if ([/system package update get installed-version] != [/system package update get latest-version] ) do={
+
+    # START Send Telegram Module
+    :local MessageText "\E2\84\B9 <b>$DeviceName:</b>%0AUpgrade packages disponible para actualizar $[/system package update get installed-version] a $[/system package update get latest-version]";
+    :local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+    $SendTelegramMessage MessageText=$MessageText;
+    #END Send Telegram Module
+
+    :log warning "Upgrade packages disponible para actualizar $[/system package update get installed-version] a $[/system package update get latest-version]";
+
+} else={
+    # START Send Telegram Module
+    :local MessageText "\E2\84\B9 <b>$DeviceName:</b>%0AUpgrade Packages: No es necesario actualizar. Actual: $[/system package update get installed-version]";
+    :local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+    $SendTelegramMessage MessageText=$MessageText;
+    #END Send Telegram Module
+
+    :log info "Upgrade Packages: No es necesario actualizar. Actual: $[/system package update get installed-version]";
+}

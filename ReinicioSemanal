@@ -1,0 +1,9 @@
+:local Time [/system clock get time];
+:local Date [/system clock get date];
+
+
+:local MessageText "\F0\9F\9F\A2 Reinicio semanal programado %0ADia: $Date%0AHora: $Time";
+:local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+$SendTelegramMessage MessageText=$MessageText;
+
+/system reboot

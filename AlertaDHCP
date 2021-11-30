@@ -1,0 +1,15 @@
+/ip dhcp-server lease
+:if (($leaseBound=1) && ([/ip dhcp-server lease find where dynamic mac-address=$leaseActMAC]!="")) do={
+    :do {
+        # Variables
+        :local DeviceName [/system identity get name];
+
+        # START Send Telegram Module
+        :local MessageText "\E2\84\B9 <b>$DeviceName:</b> Info DHCP %0D%0A Hostname: $"lease-hostname" %0D%0A IP: $leaseActIP %0D%0A MAC: $leaseActMAC %0D%0A";
+        :local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+        $SendTelegramMessage MessageText=$MessageText;
+        #END Send Telegram Module
+        
+        :log info "Alerta DHCP: se envio alerta por Telegram"
+    } on-error={:log error "Alerta DHCP: Fallo de notificación a Telegram"}
+}

@@ -1,0 +1,28 @@
+:local DeviceAverageLoadThreshold 80;
+:local NumberOfMeasurements 5;
+
+:local DeviceName [/system identity get name];
+:local Time [/system clock get time];
+:local Date [/system clock get date];
+:local CPUModel [/system resource get cpu];
+:local Load 0;
+:local Message "";
+
+:for Measurement from=1 to=$NumberOfMeasurements do={
+    :local CPULoad [/system resource get cpu-load];
+    :set Load ($Load + $CPULoad);
+    :set Message ($Message  . [:tostr $CPULoad]  . "% ");
+    :delay 5s;
+}
+:local AverageCPULoad ($Load / $NumberOfMeasurements);
+
+if ($AverageCPULoad > $DeviceAverageLoadThreshold) do={
+    :log info "Average CPU load = $AverageCPULoad%";
+    :set Message "Uso excesivo al $DeviceAverageLoadThreshold% Resultado de: $NumberOfMeasurements mediciones: $Message";
+
+    # START SEND TELEGRAM
+    :local MessageText "\F0\9F\A5\B5 <b>$DeviceName: Sobrecarga de CPU $AverageCPULoad%.</b> $Message";
+    :local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+    $SendTelegramMessage MessageText=$MessageText;
+    # END SEND TELEGRAM
+}

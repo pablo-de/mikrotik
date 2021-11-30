@@ -1,0 +1,22 @@
+:local ipv4 [/ip cloud get public-address];
+#:local ipv6 [/ip cloud get public-address-ipv6];
+:local uptime [/system resource get uptime];
+#:local CurrentTemp [/system health get temperature];
+:local FreeMemory ([/system resource get free-memory]/1000000);
+:local TotalMemory ([/system resource get total-memory]/1000000);
+:local cpu [/system resource get cpu];
+:local cpuCount [/system resource get cpu-count];
+:local cpuFrequency [/system resource get cpu-frequency];
+:local cpuLoad [/system resource get cpu-load];
+:local freeHdd ([/system resource get free-hdd-space]/1000000);
+:local totalHdd ([/system resource get total-hdd-space]/1000000);
+:local architectureName [/system resource get architecture-name]; 
+:local boardName [/system resource get board-name];
+:local version [/system resource get version];
+:local DeviceName [/system identity get name];
+
+# START Send Telegram Module
+:local MessageText "\F0\9F\9A\80 $DeviceName System Status:%0AIPv4: $ipv4%0AUptime: $uptime%0AFree Memory: $FreeMemory MB%0ATotal Memory: $TotalMemory MB%0ACPU Load: $cpuLoad %%0ACPU: $cpu%0ACPU Count: $cpuCount%0ACPU Frequency: $cpuFrequency MHz%0AArchitecture: $architectureName%0ABoard Name: $boardName%0ASoftware Version: $version%0AFree Disk: $freeHdd MB%0ATotal Disk: $totalHdd MB";
+:local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]];
+$SendTelegramMessage MessageText=$MessageText;
+#END Send Telegram Module

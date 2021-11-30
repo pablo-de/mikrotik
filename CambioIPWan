@@ -1,0 +1,17 @@
+:global CurrentIP;
+:local NewIP ([/tool fetch url=http://api.ipify.org/ as-value output=user] -> "data")
+
+:if ($NewIP != $CurrentIP) do={
+    # Variables
+    :local Time [/system clock get time];
+    :local Date [/system clock get date];
+    :local DeviceName [/system identity get name];
+    :local Text "Nueva IP: $NewIP, Anterior IP: $CurrentIP";
+    :set CurrentIP $NewIP;
+
+    # START Send Telegram Module
+    :local MessageText "\F0\9F\9F\A2 <b>$DeviceName: La IP Wan cambió.</b> $Text";
+    :local SendTelegramMessage [:parse [/system script  get MyTGBotSendMessage source]]; 
+    $SendTelegramMessage MessageText=$MessageText;
+    #END Send Telegram Module
+};
